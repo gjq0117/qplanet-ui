@@ -3,27 +3,31 @@
   <div class="poem-container myCenter my-animation-hideToShow">
     <!-- 背景图片 -->
     <el-image
+      v-if="sortInfo.sortImg"
       class="my-el-image poem-image"
       style="position: absolute; margin-top: -50px"
-      v-once
-      lazy
-      :src="bgImg"
+      :src="sortInfo.sortImg"
       fit="cover"
     >
       <div slot="error" class="image-slot"></div>
     </el-image>
     <div class="poem-wrap">
       <div>
-        <span>标题</span>
+        <span>{{ sortInfo.sortName }}</span>
       </div>
-      <p class="poem">介绍1</p>
-      <p class="info">介绍2</p>
+      <p class="poem">Tips: {{ sortInfo.sortDescription }}</p>
+      <p class="info">💕{{ sortInfo.motto }}</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    sortInfo: {
+      type: Object,
+    },
+  },
   data() {
     return {
       bgImg: require("@/assets/bg.png"),

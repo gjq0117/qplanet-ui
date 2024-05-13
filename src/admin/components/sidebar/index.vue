@@ -2,12 +2,11 @@
   <!-- 侧边栏 -->
   <div class="my-sidebar">
     <el-menu
-      default-active="2"
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"
       class="el-menu-vertical-demo"
-      :default-active="$router.currentRoute.path"
+      :default-active="$route.path"
       router
     >
       <template v-for="menu in menus">

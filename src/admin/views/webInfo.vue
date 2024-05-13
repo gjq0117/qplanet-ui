@@ -212,14 +212,21 @@ export default {
   methods: {
     // 获取webInfo
     getWebInfo() {
-      getWebInfo().then((res) => {
-        if (!this.$common.isEmpty(res.data)) {
-          this.webInfo = res.data;
-          this.mottoList = res.data.mottoList;
-          this.noticeList = res.data.noticeList;
-          this.footerList = res.data.footerList;
-        }
-      });
+      getWebInfo()
+        .then((res) => {
+          if (!this.$common.isEmpty(res.data)) {
+            this.webInfo = res.data;
+            this.mottoList = res.data.mottoList;
+            this.noticeList = res.data.noticeList;
+            this.footerList = res.data.footerList;
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            type: "error",
+            message: error.errMsg,
+          });
+        });
     },
     // 提交表单
     submit() {
@@ -247,7 +254,7 @@ export default {
       this.webInfo.footers = this.$common.formatListToStr(this.footerList, "|");
     },
     // 上传头像
-    uploadAvatar(params) {
+    async uploadAvatar(params) {
       if (this.$common.isEmpty(this.webInfo.id)) {
         this.$message({
           type: "warning",
@@ -255,23 +262,14 @@ export default {
         });
         return;
       }
-      //  从应用服务器获取上传链接等信息
-      getUploadPutUrl(params.file.name, this.$constant.FILE_UPLOAD_SCENE_BLOG)
-        .then((res) => {
-          uploadFileByPut(params.file, res.data.uploadUrl).then(() => {
-            this.webInfo.avatar = res.data.downloadUrl;
-            this.submit();
-          });
-        })
-        .catch((error) => {
-          this.$message({
-            type: "error",
-            message: error.errMsg,
-          });
-        });
+      this.webInfo.avatar = await this.$common.uploadFile(
+        params.file,
+        this.$constant.FILE_UPLOAD_SCENE_BLOG
+      );
+      this.submit();
     },
     // 上传背景图片
-    uploadBackgroundImg(params) {
+    async uploadBackgroundImg(params) {
       if (this.$common.isEmpty(this.webInfo.id)) {
         this.$message({
           type: "warning",
@@ -279,20 +277,11 @@ export default {
         });
         return;
       }
-      //  从应用服务器获取上传链接等信息
-      getUploadPutUrl(params.file.name, this.$constant.FILE_UPLOAD_SCENE_BLOG)
-        .then((res) => {
-          uploadFileByPut(params.file, res.data.uploadUrl).then(() => {
-            this.webInfo.backgroundImage = res.data.downloadUrl;
-            this.submit();
-          });
-        })
-        .catch((error) => {
-          this.$message({
-            type: "error",
-            message: error.errMsg,
-          });
-        });
+      this.webInfo.backgroundImage = await this.$common.uploadFile(
+        params.file,
+        this.$constant.FILE_UPLOAD_SCENE_BLOG
+      );
+      this.submit();
     },
     // 添加座右铭输入框
     addMottoInput() {

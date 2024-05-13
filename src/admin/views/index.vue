@@ -29,7 +29,7 @@ export default {
   position: absolute;
   left: 200px;
   right: 0;
-  top: 70px;
+  top: 80px;
   bottom: 0;
   transition: left 0.3s ease-in-out;
 }

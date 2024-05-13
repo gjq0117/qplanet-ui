@@ -23,3 +23,10 @@ export function update(webInfo) {
     data: webInfo,
   });
 }
+
+export function getWebStatisticsInfo() {
+  return request({
+    url: WEB_INFO_BASEURL + "/getWebStatisticsInfo",
+    method: "get",
+  });
+}

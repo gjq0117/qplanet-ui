@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 const TOKEN_KEY = "PLANET-TOKEN";
-const EXPIRES_DAYS = 7;
+const EXPIRES_DAYS = 1;
 
 /**
  *  获取token

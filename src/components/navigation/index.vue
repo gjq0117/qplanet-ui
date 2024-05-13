@@ -21,29 +21,79 @@
               <div class="my-menu">🏡 <span>首页</span></div>
             </li>
 
-            <!-- 家 -->
-            <li @click="$router.push({ path: '/love' })">
-              <div class="my-menu">❤️‍🔥 <span>家</span></div>
-            </li>
+            <!--            &lt;!&ndash; 家 &ndash;&gt;-->
+            <!--            <li @click="$router.push({ path: '/love' })">-->
+            <!--              <div class="my-menu">❤️‍🔥 <span>家</span></div>-->
+            <!--            </li>-->
 
-            <!-- 百宝箱 -->
-            <li @click="$router.push({ path: '/favorite' })">
-              <div class="my-menu">🧰 <span>百宝箱</span></div>
-            </li>
+            <!--            &lt;!&ndash; 百宝箱 &ndash;&gt;-->
+            <!--            <li @click="$router.push({ path: '/favorite' })">-->
+            <!--              <div class="my-menu">🧰 <span>百宝箱</span></div>-->
+            <!--            </li>-->
 
-            <!-- 留言 -->
-            <li @click="$router.push({ path: '/message' })">
-              <div class="my-menu">📪 <span>留言</span></div>
-            </li>
+            <!--            &lt;!&ndash; 留言 &ndash;&gt;-->
+            <!--            <li @click="$router.push({ path: '/message' })">-->
+            <!--              <div class="my-menu">📪 <span>留言</span></div>-->
+            <!--            </li>-->
 
-            <!-- 聊天室 -->
-            <li @click="goIm()">
-              <div class="my-menu">💬 <span>联系我</span></div>
-            </li>
+            <!--            &lt;!&ndash; 聊天室 &ndash;&gt;-->
+            <!--            <li>-->
+            <!--              <div class="my-menu">💬 <span>联系我</span></div>-->
+            <!--            </li>-->
 
             <!-- 后台 -->
             <li @click="goAdmin()">
               <div class="my-menu">💻️ <span>后台</span></div>
+            </li>
+
+            <!-- 个人中心 -->
+            <li>
+              <el-dropdown placement="bottom">
+                <el-avatar
+                  class="user-avatar"
+                  :size="36"
+                  style="margin-top: 12px"
+                  :src="
+                    !$common.isEmpty($store.state.user.currentUser.avatar)
+                      ? $store.state.user.currentUser.avatar
+                      : defaultAvatar
+                  "
+                >
+                </el-avatar>
+
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    @click.native="$router.push({ path: '/userInfo' })"
+                    v-if="
+                      getToken() &&
+                      !$common.isEmpty($store.state.user.currentUser)
+                    "
+                  >
+                    <i class="fa fa-user-circle" aria-hidden="true"></i>
+                    <span>个人中心</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="logout()"
+                    v-if="
+                      getToken() &&
+                      !$common.isEmpty($store.state.user.currentUser)
+                    "
+                  >
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                    <span>退出</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="$router.push({ path: '/login' })"
+                    v-if="
+                      !getToken() ||
+                      $common.isEmpty($store.state.user.currentUser)
+                    "
+                  >
+                    <i class="fa fa-sign-in" aria-hidden="true"></i>
+                    <span>登陆</span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </li>
           </ul>
         </div>
@@ -53,24 +103,41 @@
 </template>
 
 <script>
+import { logout } from "@/api/user";
+import { getToken, removeToken } from "@/utils/tokenUtil";
+
 export default {
   data() {
     return {
+      defaultAvatar:
+        "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
       hoverEnter: false,
     };
   },
   computed: {
     toolbar() {
-      return {
-        visible: true,
-        enter: false,
-      };
+      return this.$store.state.system.toolbar;
     },
     webName() {
       return this.$store.state.system.webInfo.webName;
     },
   },
   methods: {
+    getToken,
+    logout() {
+      logout()
+        .then(() => {
+          removeToken();
+          this.$store.commit("user/REMOVE_CURRENT_USER");
+          this.$notify({
+            type: "success",
+            title: "提示",
+            message: "你已退出登录！欢迎下次再来呀~~~😘",
+          });
+          this.$router.push({ path: "/" });
+        })
+        .catch(() => {});
+    },
     goAdmin() {
       window.open("http://" + window.location.host + "/admin");
     },

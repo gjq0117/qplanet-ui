@@ -52,7 +52,7 @@
               </div>
             </div>
           </el-image>
-          <div class="transformCenter hasVideo" v-if="article.hasVideo">
+          <div class="transformCenter hasVideo" v-if="article.hasVideo === ''">
             <svg viewBox="0 0 1024 1024" width="60" height="60">
               <path
                 d="M514 114.3c-219.9 0-398.9 178.9-398.9 398.9 0.1 219.9 179 398.8 398.9 398.8 219.9 0 398.8-178.9 398.8-398.8S733.9 114.3 514 114.3z m173 421.9L437.1 680.5c-17.7 10.2-39.8-2.6-39.8-23V368.9c0-20.4 22.1-33.2 39.8-23L687 490.2c17.7 10.2 17.7 35.8 0 46z"
@@ -88,7 +88,7 @@
               fill="#FFFFFF"
             ></path>
           </svg>
-          发布于 {{ article.createTime }}
+          发布于 {{ article.publishTime }}
         </div>
         <!-- 标题 -->
         <el-tooltip placement="top" effect="light">
@@ -190,7 +190,10 @@
           <span
             style="margin-right: 12px"
             @click.stop="
-              $router.push({ path: '/sort', query: { sortId: article.sortId } })
+              $router.push({
+                path: '/sort',
+                query: { sortId: article.sortResp.id },
+              })
             "
           >
             <svg
@@ -220,33 +223,42 @@
                 fill="#FFA86A"
               ></path>
             </svg>
-            {{ article.sort.name }}
+            {{ article.sortResp.sortName }}
           </span>
           <span
-            @click.stop="
-              $router.push({
-                path: '/sort',
-                query: { sortId: article.sortId, labelId: article.labelId },
-              })
-            "
+            v-for="label in article.labelList"
+            :key="label.id"
+            style="margin-right: 10px"
           >
-            <svg
-              viewBox="0 0 1024 1024"
-              width="15"
-              height="15"
-              style="vertical-align: -3px"
+            <span
+              @click.stop="
+                $router.push({
+                  path: '/sort',
+                  query: {
+                    sortId: article.sortResp.id,
+                    labelId: label.id,
+                  },
+                })
+              "
             >
-              <path
-                d="M905.0112 560.4352l-342.784 342.784c-56.7808 56.7808-148.7872 56.7808-205.568 0l-231.5776-231.5776c-56.7808-56.7808-56.7808-148.7872 0-205.568l342.9376-342.9376a114.8928 114.8928 0 0 1 84.224-33.5872l266.3936 7.2192c60.7744 1.6384 109.7216 50.3808 111.5648 111.1552l8.2944 267.8272c1.024 31.6928-11.1104 62.3104-33.4848 84.6848z"
-                fill="#8C7BFD"
-              ></path>
-              <path
-                d="M675.2256 491.4688c-82.176 0-149.0432-66.8672-149.0432-149.0432s66.8672-149.0432 149.0432-149.0432 149.0432 66.8672 149.0432 149.0432-66.8672 149.0432-149.0432 149.0432z m0-192.2048c-23.808 0-43.2128 19.3536-43.2128 43.2128 0 23.808 19.3536 43.2128 43.2128 43.2128 23.808 0 43.2128-19.3536 43.2128-43.2128s-19.4048-43.2128-43.2128-43.2128z"
-                fill="#FFE37B"
-              ></path>
-            </svg>
-            {{ article.label.labelName }}
-          </span>
+              <svg
+                viewBox="0 0 1024 1024"
+                width="15"
+                height="15"
+                style="vertical-align: -3px"
+              >
+                <path
+                  d="M905.0112 560.4352l-342.784 342.784c-56.7808 56.7808-148.7872 56.7808-205.568 0l-231.5776-231.5776c-56.7808-56.7808-56.7808-148.7872 0-205.568l342.9376-342.9376a114.8928 114.8928 0 0 1 84.224-33.5872l266.3936 7.2192c60.7744 1.6384 109.7216 50.3808 111.5648 111.1552l8.2944 267.8272c1.024 31.6928-11.1104 62.3104-33.4848 84.6848z"
+                  fill="#8C7BFD"
+                ></path>
+                <path
+                  d="M675.2256 491.4688c-82.176 0-149.0432-66.8672-149.0432-149.0432s66.8672-149.0432 149.0432-149.0432 149.0432 66.8672 149.0432 149.0432-66.8672 149.0432-149.0432 149.0432z m0-192.2048c-23.808 0-43.2128 19.3536-43.2128 43.2128 0 23.808 19.3536 43.2128 43.2128 43.2128 23.808 0 43.2128-19.3536 43.2128-43.2128s-19.4048-43.2128-43.2128-43.2128z"
+                  fill="#FFE37B"
+                ></path>
+              </svg>
+              {{ label.labelName }}
+            </span></span
+          >
         </div>
       </div>
     </div>
@@ -272,7 +284,7 @@ export default {
 }
 
 .recent-post-container {
-  max-width: 780px;
+  max-width: 900px;
   margin: auto;
 }
 
@@ -281,7 +293,7 @@ export default {
 }
 
 .recent-post-item {
-  height: 300px;
+  height: 350px;
   position: relative;
   display: flex;
   flex-direction: row;
@@ -358,7 +370,7 @@ export default {
 .rightImage .sort-label {
   position: absolute;
   bottom: 20px;
-  right: 35px;
+  right: 20px;
 }
 
 .sort-label span {

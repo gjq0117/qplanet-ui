@@ -17,7 +17,7 @@
       </div>
       <div>
         <proButton
-          :info="'提交'"
+          :info="'登录'"
           @click.native="login()"
           before="rgb(131, 123, 199)"
           after="linear-gradient(45deg, #f43f3b, #ec008c)"
@@ -30,8 +30,8 @@
 
 <script>
 import proButton from "@/components/common/proButton.vue";
-import { adminLogin } from "@/api/user";
-import { setToken } from "@/utils/tokenUtil";
+import { adminLogin, getUserInfo, logout } from "@/api/user";
+import { getToken, removeToken, setToken } from "@/utils/tokenUtil";
 
 export default {
   components: {
@@ -46,7 +46,7 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       if (
         this.$common.isEmpty(this.account) ||
         this.$common.isEmpty(this.password)
@@ -61,17 +61,29 @@ export default {
         account: this.account,
         password: this.$common.encrypt(this.password),
       };
+      // 如果当前存在Token 就要给他下线
+      if (getToken()) {
+        await logout();
+        this.$store.commit("user/REMOVE_CURRENT_USER");
+        removeToken();
+      }
       adminLogin(data)
         .then((res) => {
-          // 重定向去欢迎界面
-          if (res.success) {
-            // 添加token
-            setToken(res.data);
+          // 添加token
+          setToken(res.data.token);
+          this.$notify({
+            type: "success",
+            title: "尊贵的PLANET管理员：",
+            message: "欢迎回来！！！💕",
+          });
+          // 获取用户信息
+          getUserInfo().then((res) => {
+            this.$store.commit("user/SET_CURRENT_USER", res.data);
+            // 重定向到界面
             this.$router.push({ path: this.redirect });
-          }
+          });
         })
         .catch((error) => {
-          console.log(error);
           this.$message({
             type: "error",
             message: error.errMsg,

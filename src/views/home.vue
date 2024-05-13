@@ -32,13 +32,19 @@ export default {
   methods: {
     // 获取网站信息
     getWebInfo() {
-      getWebInfo().then((res) => {
-        if (!this.$common.isEmpty(res.data)) {
-          // this.webInfo = res.data;
-          // 保存到store
-          this.$store.commit("system/SET_WEB_INFO", res.data);
-        }
-      });
+      getWebInfo()
+        .then((res) => {
+          if (!this.$common.isEmpty(res.data)) {
+            // 保存到store
+            this.$store.commit("system/SET_WEB_INFO", res.data);
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            type: "error",
+            message: error.errMsg,
+          });
+        });
     },
   },
 };

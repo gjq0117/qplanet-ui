@@ -30,7 +30,6 @@ export default {
       } else {
         element.style.top = "-1000px";
       }
-
       //导航栏显示与颜色
       let toolbarStatus = {
         enter: enter,

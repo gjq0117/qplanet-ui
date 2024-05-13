@@ -12,9 +12,7 @@
 <script>
 export default {
   data() {
-    return {
-      // notices: ["我是一条网站通知", "这个网站还在还在继续努力构建哦"],
-    };
+    return {};
   },
   computed: {
     notices() {

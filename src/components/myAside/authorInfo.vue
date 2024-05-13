@@ -6,32 +6,67 @@
       :size="120"
       :src="avatar"
     ></el-avatar>
-    <div class="web-name">PLAENT</div>
+    <div class="web-name">{{ webName }}</div>
     <div class="web-info">
       <div class="blog-info-box">
         <span>文章</span>
-        <span class="blog-info-num">111</span>
+        <span class="blog-info-num">{{ statisticsInfo.articleCount }}</span>
       </div>
       <div class="blog-info-box">
         <span>分类</span>
-        <span class="blog-info-num">222</span>
+        <span class="blog-info-num">{{ statisticsInfo.sortCount }}</span>
       </div>
       <div class="blog-info-box">
         <span>访问量</span>
-        <span class="blog-info-num">333</span>
+        <span class="blog-info-num">{{ statisticsInfo.visitCount }}</span>
       </div>
     </div>
-    <a class="collection-btn">
+    <a class="collection-btn" @click.prevent="openFriend">
       <i class="el-icon-star-off" style="margin-right: 2px"></i>朋友圈
     </a>
   </div>
 </template>
 
 <script>
+import { getWebStatisticsInfo } from "@/api/webinfo";
 export default {
+  data() {
+    return {
+      statisticsInfo: {
+        sortCount: 0,
+        articleCount: 0,
+        visitCount: 0,
+      },
+    };
+  },
+  created() {
+    getWebStatisticsInfo()
+      .then((res) => {
+        this.statisticsInfo = res.data;
+      })
+      .catch((error) => {
+        this.$message({
+          type: "error",
+          message: error.errMsg,
+        });
+      });
+  },
   computed: {
     avatar() {
       return this.$store.state.system.webInfo.avatar;
+    },
+    webName() {
+      return this.$store.state.system.webInfo.webName;
+    },
+  },
+  methods: {
+    // 打开朋友圈
+    openFriend() {
+      this.$notify({
+        type: "warning",
+        title: "抱歉",
+        message: "此功能还未开放噢~敬请期待😘",
+      });
     },
   },
 };

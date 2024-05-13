@@ -38,8 +38,8 @@ body {
 
 /* 模块化背景色及透明度 */
 .background-opacity {
-    /*background: var(--background);*/
-    /*opacity: 0.88;*/
+    background: var(--background);
+    opacity: 0.88;
 }
 
 .my-el-image {

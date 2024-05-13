@@ -4,7 +4,7 @@
       <!-- 加载页面 -->
       <template slot="loader">
         <div>
-          <zombie></zombie>
+          <ring-loading></ring-loading>
         </div>
       </template>
       <!-- 内容页面 -->
@@ -45,8 +45,12 @@
           <div class="page-container">
             <!-- 侧边栏 -->
             <myAside class="aside-content"></myAside>
-            <!-- 最新文章 -->
-            <recent-articles class="recent-articles"></recent-articles>
+            <div class="recent-posts">
+              <!-- 网站通知 -->
+              <my-notice v-if="noticeFlag"></my-notice>
+              <!-- 最新文章 -->
+              <recent-articles></recent-articles>
+            </div>
           </div>
         </div>
       </template>
@@ -56,21 +60,24 @@
 
 <script>
 import loader from "@/components/common/loader.vue";
-import zombie from "@/components/common/zombie.vue";
 import printer from "@/components/common/printer.vue";
 import myAside from "@/components/myAside/index.vue";
 import recentArticles from "@/components/recentArticles/index.vue";
+import myNotice from "@/components/recentArticles/notice.vue";
+import ringLoading from "@/components/common/ringLoading.vue";
 
 export default {
   components: {
+    myNotice,
     loader,
-    zombie,
     printer,
     myAside,
     recentArticles,
+    ringLoading,
   },
   data() {
     return {
+      noticeFlag: true,
       loading: false,
     };
   },
@@ -105,6 +112,9 @@ export default {
   height: 100vh;
   position: fixed;
   z-index: -1;
+}
+.recent-posts {
+  width: 70%;
 }
 
 .background-image-index::before {
@@ -213,7 +223,7 @@ export default {
 }
 
 @media screen and (max-width: 1100px) {
-  .recent-articles {
+  .recent-posts {
     width: 100%;
   }
 

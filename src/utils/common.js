@@ -1,6 +1,8 @@
 import CryptoJS from "crypto-js";
 import constant from "@/utils/constant";
 
+import { getUploadPutUrl, uploadFileByPut } from "@/api/oss";
+
 export default {
   /**
    * 判断是否为空
@@ -65,5 +67,33 @@ export default {
       }
     }
     return result;
+  },
+
+  /**
+   *  判断是否有管理员权限
+   *
+   * @param userType
+   * @return flag
+   */
+  isAdmin(userType) {
+    return (
+      !this.isEmpty(userType) &&
+      (userType === constant.userType.SUPER_ADMIN ||
+        userType === constant.userType.ADMIN)
+    );
+  },
+
+  /**
+   *  上传文件
+   *
+   * @param file 文件
+   * @param scene 场景
+   * @return url 访问的url
+   */
+  async uploadFile(file, scene) {
+    // 获取上传链接和访问地址
+    const res = await getUploadPutUrl(file.name, scene);
+    await uploadFileByPut(file, res.data.uploadUrl);
+    return res.data.downloadUrl;
   },
 };

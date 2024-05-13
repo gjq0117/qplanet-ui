@@ -5,7 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4506139_oy0n9bl8789.css">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4506139_jamnrgvs7i.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script type=“text/javascript” src="dist/clipboard.min.js"></script>
     <title><%= htmlWebpackPlugin.options.title %></title>
     <style>
       body {
@@ -17,4 +22,7 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <script>
+    new WOW().init();
+  </script>
 </html>

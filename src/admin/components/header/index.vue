@@ -69,6 +69,7 @@ export default {
       logout()
         .then(() => {
           removeToken();
+          this.$store.commit("user/REMOVE_CURRENT_USER");
           this.$router.push({ path: "/" });
         })
         .catch((error) => {

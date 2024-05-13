@@ -3,9 +3,8 @@
   <div class="article-head my-animation-slide-top">
     <!-- 背景图片 -->
     <el-image
+      v-if="articleInfo.articleCover"
       class="article-image my-el-image"
-      v-once
-      lazy
       :src="articleInfo.articleCover"
       fit="cover"
     >
@@ -48,7 +47,7 @@
             fill="#FFFFFF"
           ></path>
         </svg>
-        <span>&nbsp;{{ articleInfo.username }}</span>
+        <span>&nbsp;{{ articleInfo.author }}</span>
         <span>·</span>
         <svg
           viewBox="0 0 1024 1024"
@@ -69,7 +68,7 @@
             fill="#FFFFFF"
           ></path>
         </svg>
-        <span>&nbsp;{{ articleInfo.createTime }}</span>
+        <span>&nbsp;{{ articleInfo.publishTime }}</span>
         <span>·</span>
         <svg
           viewBox="0 0 1024 1024"
@@ -86,7 +85,11 @@
             fill="#FFFFFF"
           ></path>
         </svg>
-        <span>&nbsp;{{ articleInfo.viewCount }}</span>
+        <span
+          >&nbsp;{{
+            $common.isEmpty(articleInfo.viewCount) ? 0 : articleInfo.viewCount
+          }}</span
+        >
         <span>·</span>
         <svg
           viewBox="0 0 1024 1024"
@@ -131,7 +134,13 @@
             fill="#3D3D63"
           ></path>
         </svg>
-        <span>&nbsp;{{ articleInfo.commentCount }}</span>
+        <span
+          >&nbsp;{{
+            $common.isEmpty(articleInfo.commentCount)
+              ? 0
+              : articleInfo.commentCount
+          }}</span
+        >
         <span>·</span>
         <svg
           viewBox="0 0 1024 1024"
@@ -148,7 +157,11 @@
             fill="#885F44"
           ></path>
         </svg>
-        <span>&nbsp;{{ articleInfo.likeCount }}</span>
+        <span
+          >&nbsp;{{
+            $common.isEmpty(articleInfo.likeCount) ? 0 : articleInfo.likeCount
+          }}</span
+        >
       </div>
     </div>
   </div>

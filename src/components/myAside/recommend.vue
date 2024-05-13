@@ -45,37 +45,31 @@
       </div>
       <div class="aside-post-date">
         <i class="el-icon-date" style="color: var(--greyFont)"></i
-        >{{ article.createTime }}
+        >{{ article.publishTime }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { recommendArticleList } from "@/api/article";
 export default {
   data() {
     return {
-      recommendArticles: [
-        {
-          id: 1,
-          // 封面
-          articleCover: require("@/assets/logo.png"),
-          username: "Obsession",
-          hasVideo: true,
-          articleTitle: "母猪产后护理母猪产后护理母猪产后护理母猪产后护理",
-          createTime: "2024-04-10",
-        },
-        {
-          id: 2,
-          // 封面
-          articleCover: require("@/assets/logo.png"),
-          username: "子笙",
-          hasVideo: false,
-          articleTitle: "hahahahahhahahahahahahahaahah",
-          createTime: "2024-04-10",
-        },
-      ],
+      recommendArticles: [],
     };
+  },
+  created() {
+    recommendArticleList()
+      .then((res) => {
+        this.recommendArticles = res.data;
+      })
+      .catch((error) => {
+        this.$message({
+          type: "error",
+          message: error.errMsg,
+        });
+      });
   },
 };
 </script>

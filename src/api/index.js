@@ -4,8 +4,9 @@ import axios from "axios";
 import nprogress from "nprogress";
 import "nprogress/nprogress.css";
 import { getToken, removeToken } from "@/utils/tokenUtil";
-import { Message } from "element-ui";
 import router from "@/router";
+import store from "@/store";
+import { Message } from "element-ui";
 
 const requests = axios.create({
   //发请求的时候，路径当中会出现api
@@ -37,24 +38,23 @@ requests.interceptors.response.use(
     let data = res.data;
     // 业务异常
     if (data !== "" && !data.success) {
-      Message.error({
+      Message({
         type: "error",
         message: data.errMsg,
       });
+      if (data.errCode === 401) {
+        // 认证异常
+        removeToken();
+        store.commit("user/REMOVE_CURRENT_USER");
+        router.push({
+          path: "/",
+        });
+      }
+      return Promise.reject(data);
     }
     return data;
   },
   (error) => {
-    if (error.response.data.errCode === 401) {
-      // 清空cookie
-      removeToken();
-      router.push({
-        path: "/adminLogin",
-        query: {
-          redirect: "/welcome",
-        },
-      });
-    }
     // 失败的回调函数
     return Promise.reject(error.response.data);
   }
