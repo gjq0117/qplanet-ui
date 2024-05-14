@@ -32,6 +32,7 @@
 import proButton from "@/components/common/proButton.vue";
 import { adminLogin, getUserInfo, logout } from "@/api/user";
 import { getToken, removeToken, setToken } from "@/utils/tokenUtil";
+import { getWebInfo } from "@/api/webinfo";
 
 export default {
   components: {
@@ -62,11 +63,11 @@ export default {
         password: this.$common.encrypt(this.password),
       };
       // 如果当前存在Token 就要给他下线
-      if (getToken()) {
-        await logout();
-        this.$store.commit("user/REMOVE_CURRENT_USER");
-        removeToken();
-      }
+      // if (getToken()) {
+      //   await logout();
+      //   this.$store.commit("user/REMOVE_CURRENT_USER");
+      //   removeToken();
+      // }
       adminLogin(data)
         .then((res) => {
           // 添加token
@@ -97,7 +98,7 @@ export default {
 <style scoped>
 .verify-container {
   height: 100vh;
-  background: url("@/assets/bg.png") center center / cover repeat;
+  background: url("@/assets/login.jpg") center center / cover repeat;
 }
 
 .verify-content {

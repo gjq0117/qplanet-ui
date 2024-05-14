@@ -10,7 +10,11 @@
     <div class="web-info">
       <div class="blog-info-box">
         <span>文章</span>
-        <span class="blog-info-num">{{ statisticsInfo.articleCount }}</span>
+        <span class="blog-info-num">{{
+          $common.isEmpty(statisticsInfo.articleCount)
+            ? 0
+            : statisticsInfo.articleCount
+        }}</span>
       </div>
       <div class="blog-info-box">
         <span>分类</span>

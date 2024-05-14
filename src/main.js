@@ -20,6 +20,16 @@ import "./assets/css/font-awesome.min.css";
 import "mavon-editor/dist/css/index.css";
 // echarts
 import * as echarts from "echarts";
+
+// 禁止右击
+document.oncontextmenu = new Function("event.returnValue=false");
+document.addEventListener("keydown", function (e) {
+  // 如果按下键F12,阻止事件
+  if (e.key == "F12") {
+    e.preventDefault();
+  }
+});
+
 Vue.prototype.$echarts = echarts;
 
 Vue.config.productionTip = false;

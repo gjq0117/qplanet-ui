@@ -8,14 +8,14 @@ const WEB_INFO_BASEURL = "/webInfo";
 
 export function getWebInfo() {
   return request({
-    url: WEB_INFO_BASEURL + "/getOne",
+    url: WEB_INFO_BASEURL + "/getWebInfo",
     method: "get",
   });
 }
 
 export function update(webInfo) {
   return request({
-    url: WEB_INFO_BASEURL + "/update",
+    url: WEB_INFO_BASEURL + "/updateOrSave",
     method: "put",
     headers: {
       isToken: true,

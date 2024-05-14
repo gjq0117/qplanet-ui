@@ -29,9 +29,7 @@ export default {
     },
   },
   data() {
-    return {
-      bgImg: require("@/assets/bg.png"),
-    };
+    return {};
   },
 };
 </script>

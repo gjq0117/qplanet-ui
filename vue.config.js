@@ -6,7 +6,7 @@ module.exports = defineConfig({
 
   devServer: {
     host: "127.0.0.1",
-    port: 8080,
+    port: 80,
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8000", // 后端地址
@@ -16,5 +16,12 @@ module.exports = defineConfig({
         },
       },
     },
+  },
+  chainWebpack: (config) => {
+    // 配置网页标题
+    config.plugin("html").tap((args) => {
+      args[0].title = "Q星球";
+      return args;
+    });
   },
 });

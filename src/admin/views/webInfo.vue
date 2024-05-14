@@ -162,7 +162,6 @@
 </template>
 
 <script>
-import { getUploadPutUrl, uploadFileByPut } from "@/api/oss";
 import { getWebInfo, update } from "@/api/webinfo";
 
 export default {
@@ -255,33 +254,17 @@ export default {
     },
     // 上传头像
     async uploadAvatar(params) {
-      if (this.$common.isEmpty(this.webInfo.id)) {
-        this.$message({
-          type: "warning",
-          message: "请先填写并保存其他信息",
-        });
-        return;
-      }
       this.webInfo.avatar = await this.$common.uploadFile(
         params.file,
         this.$constant.FILE_UPLOAD_SCENE_BLOG
       );
-      this.submit();
     },
     // 上传背景图片
     async uploadBackgroundImg(params) {
-      if (this.$common.isEmpty(this.webInfo.id)) {
-        this.$message({
-          type: "warning",
-          message: "请先填写并保存其他信息",
-        });
-        return;
-      }
       this.webInfo.backgroundImage = await this.$common.uploadFile(
         params.file,
         this.$constant.FILE_UPLOAD_SCENE_BLOG
       );
-      this.submit();
     },
     // 添加座右铭输入框
     addMottoInput() {
