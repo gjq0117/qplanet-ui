@@ -6,6 +6,12 @@
     <totopbut />
     <!-- 内容 -->
     <router-view />
+    <!-- 图片预览 -->
+    <div id="outerImg">
+      <div id="innerImg" style="position: absolute">
+        <img id="bigImg" src="" />
+      </div>
+    </div>
     <!-- 页脚 -->
     <myFooter :show-footer="true" />
   </div>
@@ -17,6 +23,7 @@ import totopbut from "@/components/common/totopbutton.vue";
 import myFooter from "@/components/common/footer.vue";
 
 import { getWebInfo } from "@/api/webinfo";
+import { saveWebVisitInfo } from "@/api/visitor";
 export default {
   components: {
     myFooter,
@@ -25,6 +32,17 @@ export default {
   },
   data() {
     return {};
+  },
+  mounted() {
+    // 保存网站访问信息
+    saveWebVisitInfo()
+      .then()
+      .catch((error) => {
+        this.$message({
+          type: "error",
+          message: error.errMsg,
+        });
+      });
   },
   created() {
     this.getWebInfo();
@@ -50,4 +68,15 @@ export default {
 };
 </script>
 
-<style scope></style>
+<style scope>
+#outerImg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+</style>

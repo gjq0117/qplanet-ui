@@ -168,6 +168,8 @@ export default {
           );
           this.articleContentHtml = md.render(this.articleInfo.articleContent);
           this.$nextTick(() => {
+            //TODO 图片展示
+            this.$common.imgShow(".entry-content img");
             // 代码高亮
             this.highlight();
             this.addId();
