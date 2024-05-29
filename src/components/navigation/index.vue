@@ -36,10 +36,10 @@
             <!--              <div class="my-menu">📪 <span>留言</span></div>-->
             <!--            </li>-->
 
-            <!--            &lt;!&ndash; 聊天室 &ndash;&gt;-->
-            <!--            <li>-->
-            <!--              <div class="my-menu">💬 <span>联系我</span></div>-->
-            <!--            </li>-->
+            <!-- 聊天室 -->
+            <li>
+              <div class="my-menu" @click="toIm()">💬 <span>聊天室</span></div>
+            </li>
 
             <!-- 后台 -->
             <li @click="goAdmin()">
@@ -124,6 +124,10 @@ export default {
   },
   methods: {
     getToken,
+    // 去聊天室
+    toIm() {
+      window.open("http://" + window.location.host + "/im");
+    },
     logout() {
       logout()
         .then(() => {

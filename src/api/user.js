@@ -115,3 +115,14 @@ export function logoutByUid(uid) {
     },
   });
 }
+
+export function batchRefreshUserSummerInfo(reqList) {
+  return request({
+    url: USER_BASEURL + "/batchRefreshUserSummerInfo",
+    method: "post",
+    headers: {
+      isToken: true,
+    },
+    data: { reqList },
+  });
+}

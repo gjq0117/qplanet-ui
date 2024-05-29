@@ -117,6 +117,32 @@ const routes = [
     ],
   },
   {
+    path: "/im",
+    name: "im",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("@/im/views/index.vue"),
+    children: [
+      {
+        path: "/im",
+        name: "chatPanel",
+        component: () => import("@/im/views/chatPanel.vue"),
+        meta: {
+          title: "聊天面板",
+        },
+      },
+      {
+        path: "/im/contact",
+        name: "contact",
+        component: () => import("@/im/views/contactPanel.vue"),
+        meta: {
+          title: "联系人面板",
+        },
+      },
+    ],
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("../views/login.vue"),

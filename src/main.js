@@ -31,6 +31,7 @@ document.addEventListener("keydown", function (e) {
 });
 
 Vue.prototype.$echarts = echarts;
+Vue.prototype.$EventBus = new Vue();
 
 Vue.config.productionTip = false;
 
