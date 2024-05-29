@@ -146,4 +146,21 @@ export default {
       });
     });
   },
+
+  /**
+   *  列表复制
+   *
+   * @param resultList
+   * @param copyList 复制的列表
+   */
+  assignForList(resultList, copyList) {
+    resultList.forEach((result) => {
+      for (let i = 0; i < copyList.length; i++) {
+        if (result.uid === copyList[i].uid) {
+          Object.assign(result, copyList[i]);
+          break;
+        }
+      }
+    });
+  },
 };

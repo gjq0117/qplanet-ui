@@ -199,6 +199,9 @@ export default {
       },
       // 加载动画
       loading: false,
+      redirect: this.$common.isEmpty(this.$route.query.redirect)
+        ? "/"
+        : this.$route.query.redirect,
     };
   },
   methods: {
@@ -259,9 +262,9 @@ export default {
           // 查询用户基本信息放到store
           getUserInfo().then((res) => {
             this.$store.commit("user/SET_CURRENT_USER", res.data);
+            // 路由
+            this.$router.push({ path: this.redirect });
           });
-          // 路由到首页
-          this.$router.push({ path: "/" });
         })
         .catch((error) => {
           this.$message({
