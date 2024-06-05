@@ -40,7 +40,7 @@ requests.interceptors.response.use(
     if (data !== "" && !data.success) {
       Message({
         type: "error",
-        message: data.errMsg,
+        message: "系统异常",
       });
       if (data.errCode === 401) {
         // 认证异常

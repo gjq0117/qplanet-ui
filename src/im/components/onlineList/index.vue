@@ -1,6 +1,6 @@
 <template>
   <!-- 在线列表 -->
-  <div class="online-class">
+  <div class="online-class" v-if="onlineNum">
     <div class="content-class">
       <!-- 在线人数 -->
       <div class="online-count-class">
@@ -26,7 +26,7 @@
 <script>
 import onlineItem from "@/im/components/onlineList/onlineItem.vue";
 import { getGroupMemberPage } from "@/api/groupMember";
-import { getUserSummerListCache } from "@/utils/storage";
+import { loadUserSummerListCache } from "@/utils/storage";
 import { getRoomOnlineNum } from "@/api/room";
 
 export default {
@@ -51,33 +51,43 @@ export default {
     };
   },
   mounted() {
-    this.$EventBus.$on("sendRoomId", (roomId) => {
+    this.$EventBus.$on("sendRoomInfo", (room) => {
+      // 初始化分页参数
+      this.cursorPageParam = {
+        pageSize: 25,
+        cursor: null,
+        roomId: null,
+      };
       // 获取在线人数
-      getRoomOnlineNum(roomId).then((res) => {
+      getRoomOnlineNum(room.roomId).then((res) => {
         this.onlineNum = res.data;
       });
-      this.cursorPageParam.roomId = roomId;
+      this.cursorPageParam.roomId = room.roomId;
       // 第一次分页请求
       this.sendGroupMemberPage(this.cursorPageParam);
-      // 取消事件
-      this.$EventBus.$off("sendRoomId");
     });
+  },
+  beforeDestroy() {
+    // 取消事件
+    this.$EventBus.$off("sendRoomInfo");
   },
   methods: {
     sendGroupMemberPage(params) {
       getGroupMemberPage(params)
         .then((res) => {
-          this.cursorPageParam.cursor = res.data.cursor;
-          this.isLast = res.data.isLast;
-          let uidList = [];
-          res.data.list.forEach((resp) => {
-            uidList.push(resp.uid);
-          });
-          getUserSummerListCache(uidList).then((data) => {
-            let respList = res.data.list;
-            this.$common.assignForList(respList, data);
-            this.userInfoList = this.userInfoList.concat(respList);
-          });
+          if (res.data) {
+            this.cursorPageParam.cursor = res.data.cursor;
+            this.isLast = res.data.isLast;
+            let uidList = [];
+            res.data.list.forEach((resp) => {
+              uidList.push(resp.uid);
+            });
+            loadUserSummerListCache(uidList).then((data) => {
+              let respList = res.data.list;
+              this.$common.assignForList(respList, data);
+              this.userInfoList = this.userInfoList.concat(respList);
+            });
+          }
         })
         .catch((error) => {
           this.$message({
@@ -87,7 +97,6 @@ export default {
         });
     },
     load() {
-      console.log("load");
       this.sendGroupMemberPage(this.cursorPageParam);
     },
   },

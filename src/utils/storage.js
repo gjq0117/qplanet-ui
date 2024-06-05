@@ -10,7 +10,7 @@ const IM_USER_INFO_LIST_CACHE = "im_user_info_list_cache";
  *
  * @return {any}
  */
-export async function getUserSummerListCache(uidList) {
+export async function loadUserSummerListCache(uidList) {
   if (!uidList || uidList.length === 0) {
     return;
   }
@@ -40,7 +40,7 @@ export async function getUserSummerListCache(uidList) {
         message: error.errMsg,
       });
     });
-  return getCacheInfo(uidList);
+  return getUserCacheList(uidList);
 }
 
 /**
@@ -48,11 +48,17 @@ export async function getUserSummerListCache(uidList) {
  *
  * @param uidList
  */
-function getCacheInfo(uidList) {
+export function getUserCacheList(uidList) {
   const userSummerInfo = getItem();
   return uidList.map((uid) => {
     return userSummerInfo[uid];
   });
+}
+
+export function getUserCache(uid) {
+  const userSummerInfo = getItem();
+
+  return userSummerInfo[uid];
 }
 
 /**

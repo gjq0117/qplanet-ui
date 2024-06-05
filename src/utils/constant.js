@@ -46,5 +46,5 @@ export default {
     "#23d5ab",
   ],
 
-  tocbot: "https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js",
+  // tocbot: "https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js",
 };

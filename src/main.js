@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import common from "./utils/common";
 import constant from "./utils/constant";
+import msgUtils from "@/utils/msgUtils";
 import mavonEditor from "mavon-editor";
 
 import ElementUI from "element-ui";
@@ -40,6 +41,7 @@ Vue.use(mavonEditor);
 
 Vue.prototype.$common = common;
 Vue.prototype.$constant = constant;
+Vue.prototype.$msgUtils = msgUtils;
 
 new Vue({
   router,

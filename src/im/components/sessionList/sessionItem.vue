@@ -10,8 +10,8 @@
       <div style="font-size: 15px; color: white">
         {{ session.name }}
       </div>
-      <div style="font-size: 12px; color: #dddddd">
-        {{ session.lastMsg }}
+      <div style="font-size: 12px; color: #dddddd" v-if="session.lastMsg">
+        {{ session.lastMsgSendName }} : {{ session.lastMsg }}
       </div>
     </div>
     <!-- 时间 -->
@@ -40,7 +40,7 @@ export default {
   width: 100%;
   padding: 5px;
   margin-bottom: 10px;
-  background-color: lightslategray;
+  background-color: #585e74;
 }
 
 .item-class :hover {
