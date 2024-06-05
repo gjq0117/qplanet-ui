@@ -126,7 +126,8 @@ export default {
     getToken,
     // 去聊天室
     toIm() {
-      window.open("http://" + window.location.host + "/im");
+      this.$router.push({ path: "/im" });
+      // window.open("http://" + window.location.host + "/im");
     },
     logout() {
       logout()

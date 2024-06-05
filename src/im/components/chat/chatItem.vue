@@ -2,77 +2,78 @@
   <!-- 消息项 -->
   <div
     class="item-class"
-    :class="{ 'left-msg': msgInfo.type === 0, 'right-msg': msgInfo.type === 1 }"
+    :class="{
+      'left-msg': left,
+      'right-msg': right,
+    }"
   >
     <div>
       <!-- 头像 -->
       <div
         :class="{
-          'left-msg': msgInfo.type === 0,
-          'right-msg': msgInfo.type === 1,
+          'left-msg': left,
+          'right-msg': right,
         }"
       >
-        <el-tooltip effect="dark" placement="right-start">
-          <div slot="content" style="width: 200px; height: 150px">
-            <div class="tooltip-content-class">
-              <div class="tooltip-image-class">
-                <el-image
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                ></el-image>
-              </div>
-              <div>
-                <div class="tooltip-info-class tooltip-info-name-class">
-                  <span>昵称：姜某姜某姜某姜某姜某姜某</span>
-                  <span>男</span>
-                </div>
-                <div class="tooltip-info-class">
-                  <span>性别：<i class="iconfont nan"></i></span>
-                </div>
-                <div class="tooltip-info-class">
-                  <span>地区：长沙</span>
-                </div>
-              </div>
-            </div>
-            <div class="tooltip-option-class">
-              <!-- 发消息 -->
-              <div class="icon-class">
-                <i class="iconfont faxiaoxi"></i>
-              </div>
-              <!-- 加好友 -->
-              <div class="icon-class">
-                <i class="iconfont jiahaoyou"></i>
-              </div>
-              <!-- 艾特 -->
-              <div class="icon-class">
-                <i class="iconfont aite"></i>
-              </div>
-            </div>
-          </div>
-          <el-avatar
-            class="avatar-class"
-            :size="35"
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          ></el-avatar>
-        </el-tooltip>
+        <!--        <el-tooltip effect="dark" placement="right-start">-->
+        <!--          <div slot="content" style="width: 200px; height: 150px">-->
+        <!--            <div class="tooltip-content-class">-->
+        <!--              <div class="tooltip-image-class">-->
+        <!--                <el-image :src="msgInfo.avatar"></el-image>-->
+        <!--              </div>-->
+        <!--              <div>-->
+        <!--                <div class="tooltip-info-class tooltip-info-name-class">-->
+        <!--                  <span>昵称：{{ msgInfo.nickname }}</span>-->
+        <!--                  <span>男</span>-->
+        <!--                </div>-->
+        <!--                <div class="tooltip-info-class">-->
+        <!--                  <span>性别：<i class="iconfont nan"></i></span>-->
+        <!--                </div>-->
+        <!--                <div class="tooltip-info-class">-->
+        <!--                  <span>地区：长沙</span>-->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="tooltip-option-class">-->
+        <!--              &lt;!&ndash; 发消息 &ndash;&gt;-->
+        <!--              <div class="icon-class">-->
+        <!--                <i class="iconfont faxiaoxi"></i>-->
+        <!--              </div>-->
+        <!--              &lt;!&ndash; 加好友 &ndash;&gt;-->
+        <!--              <div class="icon-class">-->
+        <!--                <i class="iconfont jiahaoyou"></i>-->
+        <!--              </div>-->
+        <!--              &lt;!&ndash; 艾特 &ndash;&gt;-->
+        <!--              <div class="icon-class">-->
+        <!--                <i class="iconfont aite"></i>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <el-avatar
+          class="avatar-class"
+          :size="35"
+          :src="msgInfo.avatar"
+        ></el-avatar>
+        <!--        </el-tooltip>-->
       </div>
       <!-- 内容 -->
       <div
         :class="{
-          'left-content': msgInfo.type === 0,
-          'right-content': msgInfo.type === 1,
+          'left-content': left,
+          'right-content': right,
         }"
       >
         <!-- 发送者信息 -->
         <div
           :class="{
-            'left-info-class': msgInfo.type === 0,
-            'right-info-class': msgInfo.type === 1,
+            'left-info-class': left,
+            'right-info-class': right,
           }"
         >
           <span
             style="font-size: 15px; color: lightgray"
-            :class="{ 'right-name-class': msgInfo.type === 1 }"
-            >{{ msgInfo.name }}(<span>{{ msgInfo.city }}</span
+            :class="{ 'right-name-class': right }"
+            >{{ msgInfo.nickname }}(<span>{{ msgInfo.locPlace }}</span
             >)</span
           >
         </div>
@@ -80,12 +81,12 @@
         <div
           class="msg-bubble-class"
           :class="{
-            'left-msg-bubble-class': msgInfo.type === 0,
-            'right-msg-bubble-class': msgInfo.type === 1,
+            'left-msg-bubble-class': left,
+            'right-msg-bubble-class': right,
           }"
         >
-          <!-- 消息内容 -->
-          <span style="color: white">{{ msgInfo.msg }}</span>
+          <!-- TODO 消息内容(区分不同消息类型) -->
+          <span style="color: white">{{ msgInfo.body.content }}</span>
         </div>
       </div>
     </div>
@@ -107,7 +108,17 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      currUid: this.$store.state.user.currentUser.uid,
+    };
+  },
+  computed: {
+    left() {
+      return this.msgInfo.uid !== this.currUid;
+    },
+    right() {
+      return this.msgInfo.uid === this.currUid;
+    },
   },
 };
 </script>
@@ -137,12 +148,14 @@ export default {
 }
 
 .left-msg-bubble-class {
+  float: left;
   border-top-right-radius: 15px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
 
 .right-msg-bubble-class {
+  float: right;
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;

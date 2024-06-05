@@ -1,5 +1,6 @@
 import { getToken } from "@/utils/tokenUtil";
 import { sendHeartBeat } from "./send";
+import { receiveNewMsg } from "./receive";
 
 let CURRENT_SOCKET = null;
 
@@ -15,16 +16,17 @@ export function openWebSocket() {
   CURRENT_SOCKET.onopen = (event) => {
     // 开始心跳
     heartBeat.start();
-    console.log("websocket连接上了..." + event);
+    // console.log("websocket连接上了..." + event);
   };
 
   // 收到服务器响应事件
   CURRENT_SOCKET.onmessage = (event) => {
-    console.log("收到服务器响应" + event.data);
+    // console.log("收到服务器响应" + event.data);
+    receiveNewMsg(JSON.parse(event.data));
   };
 
   CURRENT_SOCKET.onclose = (event) => {
-    console.log("websocket关闭了..." + event);
+    // console.log("websocket关闭了..." + event);
   };
 
   // 监听窗口关闭事件

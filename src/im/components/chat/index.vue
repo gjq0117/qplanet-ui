@@ -5,35 +5,37 @@
       <!-- 群信息 -->
       <div class="info-class">
         <!--  群头像 -->
-        <el-avatar
-          :size="40"
-          src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        ></el-avatar>
+        <el-avatar :size="40" :src="roomInfo.avatar"></el-avatar>
         <!-- 群名 -->
-        <span style="color: white; margin-left: 10px">一千万只是第一步</span>
+        <span style="color: white; margin-left: 10px">{{ roomInfo.name }}</span>
       </div>
       <!-- 聊天框 -->
       <div class="chat-box-class">
-        <chat-item :msg-info="receive1" />
-        <chat-item :msg-info="send" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
-        <chat-item :msg-info="receive2" />
+        <infinite-loading
+          :key="refresh"
+          ref="infiniteLoading"
+          direction="top"
+          @infinite="infiniteHandler"
+        >
+          <div slot="no-more" style="color: #1a252f"></div>
+          <div slot="no-results" style="color: #1a252f">还没有消息噢~</div>
+        </infinite-loading>
+        <span v-for="msg in msgList" :key="msg.id">
+          <chat-item :msg-info="msg" />
+        </span>
       </div>
       <!-- 输入框 -->
       <div class="input-class">
-        <input placeholder="来聊点什么吧~" />
+        <input
+          placeholder="来聊点什么吧~"
+          v-model="msg"
+          @keyup.enter="sendTextMsg"
+        />
         <div><i class="iconfont ren-04"></i></div>
         <div><i class="iconfont aite"></i></div>
         <div><i class="iconfont tupian"></i></div>
         <div><i class="iconfont wenjian-"></i></div>
-        <div style="margin-left: 10px">
+        <div style="margin-left: 10px" @click="sendTextMsg">
           <i class="iconfont fasong"></i>
         </div>
       </div>
@@ -42,33 +44,170 @@
 </template>
 
 <script>
+import InfiniteLoading from "vue-infinite-loading";
 import chatItem from "@/im/components/chat/chatItem.vue";
+import { pageMsg, sendMsg } from "@/api/chatMessage";
+import { loadUserSummerListCache } from "@/utils/storage";
+
 export default {
   components: {
     chatItem,
+    InfiniteLoading,
   },
   data() {
     return {
-      receive1: {
-        type: 0,
-        name: "雷某",
-        city: "广州",
-        msg: "啊啊啊啊啊啊啊啊啊啊",
+      scroll: false,
+      refresh: false,
+      infiniteLoading: null,
+      msgList: [],
+      pageReq: {
+        roomId: 0,
+        pageSize: 15,
+        cursor: "",
       },
-      receive2: {
-        type: 0,
-        name: "姜某",
-        city: "长沙",
-        msg: "6666677776666666",
-      },
-      send: {
-        type: 1,
-        name: "彭某",
-        city: "长沙",
-        msg: "发什么骚1111111111111111111111",
-        showTime: "昨天18:36",
+      msg: "",
+      // 回复消息的ID
+      replyMsgId: undefined,
+      // at列表
+      atUidList: [],
+      // 房间信息
+      roomInfo: {
+        avatar: "",
+        name: "",
       },
     };
+  },
+  created() {
+    // 新消息监听器
+    this.$EventBus.$on("newMsg", (msg) => {
+      this.buildMsgList([msg]).then((data) => {
+        this.$nextTick(() => {
+          data.forEach((item) => {
+            if (item.roomId === this.pageReq.roomId) {
+              this.msgList = this.msgList.concat([item]);
+            }
+          });
+          // 发送接收到新消息需要将div滚动到最底部
+          this.scroll = true;
+        });
+      });
+    });
+    // 切换房间监听器
+    this.infiniteLoading = this.$refs.infiniteLoading;
+    this.$EventBus.$on("sendRoomInfo", (room, first) => {
+      this.initRoomInfo(room);
+      // 消息置空
+      this.msg = "";
+      this.pageReq.roomId = room.roomId;
+      if (!first) {
+        this.refresh = !this.refresh;
+        // 清空消息列表
+        this.pageReq.cursor = "";
+        this.msgList = [];
+      }
+    });
+  },
+  updated() {
+    if (this.scroll) {
+      let div = document.querySelector(".chat-box-class");
+      div.scrollTop = div.scrollHeight;
+      this.scroll = false;
+    }
+  },
+  beforeDestroy() {
+    // 取消事件
+    this.$EventBus.$off("sendRoomInfo");
+    this.$EventBus.$off("newMsg");
+  },
+  methods: {
+    // 发送文本消息
+    sendTextMsg() {
+      if (!this.$common.isEmpty(this.msg)) {
+        let req = this.$msgUtils.buildTextMsgReqBody(
+          this.pageReq.roomId,
+          this.msg,
+          this.replyMsgId,
+          this.atUidList
+        );
+        sendMsg(req)
+          .then((res) => {
+            this.msg = "";
+            this.replyMsgId = undefined;
+            this.atUidList = [];
+          })
+          .catch((error) => {
+            this.$message({
+              type: "error",
+              message: error.errMsg,
+            });
+          });
+      }
+    },
+    // 初始化房间信息
+    initRoomInfo(roomInfo) {
+      this.roomInfo.avatar = roomInfo.avatar;
+      this.roomInfo.name = roomInfo.name;
+    },
+    // 滚动翻页
+    infiniteHandler($state) {
+      let _this = this;
+      if (this.pageReq.roomId === 0) {
+        setTimeout(() => {
+          _this.infiniteHandler($state);
+        }, 10);
+      } else {
+        this.sendPageMsg($state);
+      }
+    },
+    sendPageMsg($state) {
+      pageMsg(this.pageReq)
+        .then((res) => {
+          // 设置分页信息
+          this.pageReq.cursor = res.data.cursor;
+          // 组装消息列表
+          this.buildMsgList(res.data.list).then((data) => {
+            // 反转data
+            data = data.reverse();
+            this.msgList = data.concat(this.msgList);
+            $state.loaded();
+            if (res.data.isLast) {
+              $state.complete();
+            }
+          });
+        })
+        .catch((error) => {
+          $state.loaded();
+          this.$message({
+            type: "error",
+            message: error.errMsg,
+          });
+        });
+    },
+    async buildMsgList(list) {
+      // 收集uid
+      let uidList = [];
+      let msgList = [];
+      list.forEach((item) => {
+        uidList.push(item.fromUser.uid);
+        // 构建消息响应体
+        let body = this.$msgUtils.buildMsgRespBody(
+          item.messageInfo.body,
+          item.messageInfo.type
+        );
+        msgList.push({
+          id: item.messageInfo.id,
+          roomId: item.messageInfo.roomId,
+          sendTime: item.messageInfo.sendTime,
+          type: item.messageInfo.type,
+          body,
+          uid: item.fromUser.uid,
+        });
+      });
+      await loadUserSummerListCache(uidList).then((data) => {
+        this.$common.assignForList(msgList, data);
+      });
+      return msgList;
+    },
   },
 };
 </script>

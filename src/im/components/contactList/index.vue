@@ -48,7 +48,7 @@
 import contactItem from "@/im/components/contactList/contactItem.vue";
 import friendApply from "@/im/components/contactList/friendApply.vue";
 import { getFriendApplyList } from "@/api/userApply";
-import { getUserSummerListCache } from "@/utils/storage";
+import { loadUserSummerListCache } from "@/utils/storage";
 import { pageCareFriendInfo, pageFriendInfo } from "@/api/userFriend";
 
 export default {
@@ -171,7 +171,7 @@ export default {
         uidList.push(data.uid);
       });
       let respList;
-      await getUserSummerListCache(uidList).then((data) => {
+      await loadUserSummerListCache(uidList).then((data) => {
         respList = resp.list;
         this.$common.assignForList(respList, data);
       });
