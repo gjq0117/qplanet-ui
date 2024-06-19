@@ -108,6 +108,7 @@
 
 <script>
 import { getUserInfo, modifyUserInfo } from "@/api/user";
+import { removeUserSummerCache } from "@/utils/storage";
 
 export default {
   data() {
@@ -126,6 +127,7 @@ export default {
             type: "success",
             message: "修改用户信息成功",
           });
+          removeUserSummerCache(this.currentUser.uid);
           getUserInfo().then((res) => {
             this.$store.commit("user/SET_CURRENT_USER", res.data);
           });

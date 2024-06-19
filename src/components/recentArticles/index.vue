@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import recentArticleCard from "@/components/common/recentArticleCard.vue";
+import recentArticleCard from "@/components/recentArticles/recentArticleCard.vue";
 import { getSortAndNewArticle } from "@/api/sort";
 
 export default {

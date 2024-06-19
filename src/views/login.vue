@@ -318,6 +318,7 @@ export default {
           });
         })
         .catch((error) => {
+          this.send = false;
           this.$message({
             type: "warning",
             message: error.errMsg,
@@ -340,13 +341,16 @@ export default {
       this.send = true;
       getRegisterCode(this.registerForm)
         .then((res) => {
-          this.registerForm.key = res.data;
-          this.$message({
-            type: "success",
-            message: "验证码发送成功！请注意查收~",
-          });
+          if (res.success) {
+            this.registerForm.key = res.data;
+            this.$message({
+              type: "success",
+              message: "验证码发送成功！请注意查收~",
+            });
+          }
         })
         .catch((error) => {
+          this.send = false;
           this.$message({
             type: "warning",
             message: error.errMsg,

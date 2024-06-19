@@ -56,6 +56,7 @@ export default {
   },
   data() {
     return {
+      currUid: this.$store.state.user.currentUser.uid,
       scroll: false,
       refresh: false,
       infiniteLoading: null,
@@ -78,34 +79,8 @@ export default {
     };
   },
   created() {
-    // 新消息监听器
-    this.$EventBus.$on("newMsg", (msg) => {
-      this.buildMsgList([msg]).then((data) => {
-        this.$nextTick(() => {
-          data.forEach((item) => {
-            if (item.roomId === this.pageReq.roomId) {
-              this.msgList = this.msgList.concat([item]);
-            }
-          });
-          // 发送接收到新消息需要将div滚动到最底部
-          this.scroll = true;
-        });
-      });
-    });
-    // 切换房间监听器
-    this.infiniteLoading = this.$refs.infiniteLoading;
-    this.$EventBus.$on("sendRoomInfo", (room, first) => {
-      this.initRoomInfo(room);
-      // 消息置空
-      this.msg = "";
-      this.pageReq.roomId = room.roomId;
-      if (!first) {
-        this.refresh = !this.refresh;
-        // 清空消息列表
-        this.pageReq.cursor = "";
-        this.msgList = [];
-      }
-    });
+    this.registerNewMsgListener();
+    this.registerChangeRoomListener();
   },
   updated() {
     if (this.scroll) {
@@ -120,6 +95,46 @@ export default {
     this.$EventBus.$off("newMsg");
   },
   methods: {
+    // 切换房间监听器
+    registerChangeRoomListener() {
+      this.infiniteLoading = this.$refs.infiniteLoading;
+      this.$EventBus.$on("sendRoomInfo", (room, first) => {
+        this.initRoomInfo(room);
+        // 消息置空
+        this.msg = "";
+        this.pageReq.roomId = room.roomId;
+        if (!first) {
+          this.refresh = !this.refresh;
+          // 清空消息列表
+          this.pageReq.cursor = "";
+          this.msgList = [];
+        }
+      });
+    },
+    // 新消息监听器
+    registerNewMsgListener() {
+      this.$EventBus.$on("newMsg", (msg) => {
+        this.buildMsgList([msg], false).then((data) => {
+          this.addMsgToList(data);
+        });
+      });
+    },
+    /**
+     *  添加消息到消息列表
+     *
+     * @param msgList
+     */
+    addMsgToList(msgList) {
+      this.$nextTick(() => {
+        msgList.forEach((item) => {
+          if (item.roomId === this.pageReq.roomId) {
+            this.msgList = this.msgList.concat([item]);
+          }
+        });
+        // 发送接收到新消息需要将div滚动到最底部
+        this.scroll = true;
+      });
+    },
     // 发送文本消息
     sendTextMsg() {
       if (!this.$common.isEmpty(this.msg)) {
@@ -131,6 +146,7 @@ export default {
         );
         sendMsg(req)
           .then((res) => {
+            // 置空信息
             this.msg = "";
             this.replyMsgId = undefined;
             this.atUidList = [];
@@ -183,7 +199,45 @@ export default {
           });
         });
     },
-    async buildMsgList(list) {
+    /**
+     * 构建当前用户消息
+     *
+     * @param msg
+     */
+    buildCurrUserMsg(msg) {
+      let currUser = this.$store.state.user.currentUser;
+      // 用户信息
+      let userInfo = {
+        uid: currUser.uid,
+        avatar: currUser.avatar,
+        nickname: currUser.nickname,
+        locPlace: currUser.locPlace,
+      };
+      // 构建消息响应体
+      let body = this.$msgUtils.buildMsgRespBody(
+        msg.messageInfo.body,
+        msg.messageInfo.type
+      );
+      let msgInfo = {
+        id: msg.messageInfo.id,
+        roomId: msg.messageInfo.roomId,
+        sendTime: msg.messageInfo.sendTime,
+        type: msg.messageInfo.type,
+        body,
+        uid: msg.fromUser.uid,
+      };
+      Object.assign(msgInfo, userInfo);
+      return msgInfo;
+    },
+
+    /**
+     * 构建消息列表
+     *
+     * @param list
+     * @param needRefreshTime
+     * @return {Promise<*[]>}
+     */
+    async buildMsgList(list, needRefreshTime = true) {
       // 收集uid
       let uidList = [];
       let msgList = [];
@@ -203,7 +257,7 @@ export default {
           uid: item.fromUser.uid,
         });
       });
-      await loadUserSummerListCache(uidList).then((data) => {
+      await loadUserSummerListCache(uidList, needRefreshTime).then((data) => {
         this.$common.assignForList(msgList, data);
       });
       return msgList;

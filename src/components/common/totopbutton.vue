@@ -23,12 +23,12 @@ export default {
       var element = document.querySelector(".cd-top");
       if (isShow) {
         if (window.innerHeight > 950) {
-          element.style.top = "1000px";
+          element.style.top = "80vh";
         } else {
           element.style.top = window.innerHeight - 950 + "px";
         }
       } else {
-        element.style.top = "-1000px";
+        element.style.top = "-80vh";
       }
       //导航栏显示与颜色
       let toolbarStatus = {

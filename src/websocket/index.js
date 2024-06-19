@@ -9,8 +9,15 @@ let CURRENT_SOCKET = null;
  */
 export function openWebSocket() {
   const token = getToken();
-  // 连接
-  CURRENT_SOCKET = new WebSocket("ws://127.0.0.1:8010?token=" + token);
+
+  const url = process.env.VUE_APP_WEBSOCKET_URL + "?token=" + token;
+  CURRENT_SOCKET = new WebSocket(url);
+  // 连接本地
+  // CURRENT_SOCKET = new WebSocket("ws://127.0.0.1:8010?token=" + token);
+  // 线上
+  // CURRENT_SOCKET = new WebSocket(
+  //   "wss://api.qplanet.cn/websocket?token=" + token
+  // );
 
   // 连接事件
   CURRENT_SOCKET.onopen = (event) => {

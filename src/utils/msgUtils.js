@@ -1,4 +1,4 @@
-import { getUserCache } from "./storage";
+import { loadUserSummerCache } from "./storage";
 
 export default {
   // 消息类型
@@ -41,6 +41,7 @@ export default {
     switch (type) {
       case this.TEXT_MSG:
         body = this.buildTextMsgRespBody(msgBody);
+        break;
     }
     return body;
   },
@@ -54,7 +55,7 @@ export default {
     let body = null;
     if (msgBody.reply) {
       // 有回复消息,构建回复体用户信息
-      let userInfo = getUserCache(msgBody.reply.uid);
+      let userInfo = loadUserSummerCache(msgBody.reply.uid);
       body = msgBody.reply.body;
       Object.assign(body, userInfo);
       msgBody.reply.body = body;

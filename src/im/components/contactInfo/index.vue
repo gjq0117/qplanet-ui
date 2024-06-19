@@ -354,7 +354,7 @@ export default {
 
 /* 覆盖脚部按钮区域样式 */
 ::v-deep .el-dialog__footer {
-  padding: 10px;
-  margin: 0 20%;
+  //padding: 10px;
+  //margin: 0 20%;
 }
 </style>

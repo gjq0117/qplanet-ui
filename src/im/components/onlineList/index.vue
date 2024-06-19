@@ -51,6 +51,13 @@ export default {
     };
   },
   mounted() {
+    // 新人进群通知
+    this.$EventBus.$on("newMemberJoining", (data) => {
+      // 重新加载群成员
+      this.initParams();
+      this.sendGroupMemberPage(this.cursorPageParam);
+    });
+    // 切换房间号通知
     this.$EventBus.$on("sendRoomInfo", (room) => {
       // 初始化分页参数
       this.cursorPageParam = {
@@ -64,6 +71,7 @@ export default {
       });
       this.cursorPageParam.roomId = room.roomId;
       // 第一次分页请求
+      this.initParams();
       this.sendGroupMemberPage(this.cursorPageParam);
     });
   },
@@ -73,6 +81,7 @@ export default {
   },
   methods: {
     sendGroupMemberPage(params) {
+      // this.userInfoList = [];
       getGroupMemberPage(params)
         .then((res) => {
           if (res.data) {
@@ -95,6 +104,11 @@ export default {
             message: error.errMsg,
           });
         });
+    },
+    initParams() {
+      this.userInfoList = [];
+      this.cursorPageParam.cursor = null;
+      this.isLast = false;
     },
     load() {
       this.sendGroupMemberPage(this.cursorPageParam);
@@ -128,7 +142,7 @@ export default {
 }
 
 .member-list {
-  height: 95%;
+  height: 94%;
   overflow-y: auto; /* 当内容溢出时显示垂直滚动条 */
   overflow-x: hidden;
 }
