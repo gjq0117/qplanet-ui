@@ -99,7 +99,7 @@
     <el-dialog
       title="找回密码"
       :visible.sync="modifyPwdVisible"
-      width="20%"
+      width="30%"
       :append-to-body="true"
       :close-on-click-modal="false"
       :before-close="clearModifyForm"

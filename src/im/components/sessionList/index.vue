@@ -63,13 +63,15 @@ export default {
       this.$EventBus.$on("newMsg", (msg) => {
         let roomId = msg.messageInfo.roomId;
         let user = loadUserSummerCache(msg.fromUser.uid);
-        console.log(user);
         // 找到对应的会话，并移到第一位
         for (let i = 0; i < this.sessionList.length; i++) {
           if (this.sessionList[i].roomId === roomId) {
             let item = this.sessionList.splice(i, 1)[0];
             this.$nextTick(() => {
-              item.activeTime = msg.messageInfo.sendTime;
+              // 格式化时间
+              item.activeTime = this.$dateUtils.formatTime(
+                msg.messageInfo.sendTime
+              );
               item.lastMsg = msg.messageInfo.body.content;
               item.lastMsgSendName = user[0].nickname;
               this.sessionList.unshift(item);

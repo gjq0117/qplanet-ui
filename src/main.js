@@ -5,6 +5,7 @@ import store from "./store";
 import common from "./utils/common";
 import constant from "./utils/constant";
 import msgUtils from "@/utils/msgUtils";
+import dateUtils from "@/utils/DateUtils";
 import mavonEditor from "mavon-editor";
 
 import ElementUI from "element-ui";
@@ -42,6 +43,7 @@ Vue.use(mavonEditor);
 Vue.prototype.$common = common;
 Vue.prototype.$constant = constant;
 Vue.prototype.$msgUtils = msgUtils;
+Vue.prototype.$dateUtils = dateUtils;
 
 new Vue({
   router,

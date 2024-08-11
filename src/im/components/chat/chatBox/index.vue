@@ -1,0 +1,220 @@
+<template>
+  <!-- 聊天框 -->
+  <div class="chat-box-class">
+    <div v-for="msg in msgList" :key="msg.id">
+      <chat-item :msg-info="msg" />
+    </div>
+    <infinite-loading
+      :key="refresh"
+      ref="infiniteLoading"
+      direction="top"
+      @infinite="infiniteHandler"
+    >
+      <div slot="no-more" style="color: #1a252f"></div>
+      <div slot="no-results" style="color: #1a252f">还没有消息噢~</div>
+    </infinite-loading>
+  </div>
+</template>
+
+<script>
+import InfiniteLoading from "vue-infinite-loading";
+import chatItem from "@/im/components/chat/chatBox/msgBubble.vue";
+import { pageMsg } from "@/api/chatMessage";
+import { loadUserSummerListCache } from "@/utils/storage";
+
+export default {
+  components: { chatItem, InfiniteLoading },
+  data() {
+    return {
+      scroll: false,
+      refresh: false,
+      infiniteLoading: null,
+      msgList: [],
+      pageReq: {
+        roomId: 0,
+        pageSize: 15,
+        cursor: "",
+      },
+      // 滚动的高度
+      scrollTop: 0,
+    };
+  },
+  created() {
+    this.registerNewMsgListener();
+    this.registerChangeRoomListener();
+  },
+  updated() {
+    if (this.scroll) {
+      let div = document.querySelector(".chat-box-class");
+      div.scrollTop = div.scrollHeight;
+      this.scroll = false;
+    }
+  },
+  beforeDestroy() {
+    // 取消事件
+    this.$EventBus.$off("sendRoomInfo");
+    this.$EventBus.$off("newMsg");
+  },
+  methods: {
+    // 切换房间监听器
+    registerChangeRoomListener() {
+      this.infiniteLoading = this.$refs.infiniteLoading;
+      this.$EventBus.$on("sendRoomInfo", (room, first) => {
+        // 消息置空
+        this.pageReq.roomId = room.roomId;
+        if (!first) {
+          this.refresh = !this.refresh;
+          // 清空消息列表
+          this.pageReq.cursor = "";
+          this.msgList = [];
+        }
+      });
+    },
+    // 新消息监听器
+    registerNewMsgListener() {
+      this.$EventBus.$on("newMsg", (msg) => {
+        this.buildMsgList([msg], false).then((data) => {
+          this.addMsgToList(data);
+        });
+      });
+    },
+    /**
+     *  添加消息到消息列表
+     *
+     * @param msgList
+     */
+    addMsgToList(msgList) {
+      this.$nextTick(() => {
+        msgList.forEach((item) => {
+          if (item.roomId === this.pageReq.roomId) {
+            if (
+              this.$dateUtils.intervalMinute(
+                this.msgList[this.msgList.length - 1].sendTime,
+                item.sendTime,
+                5
+              )
+            ) {
+              item.showTime = this.$dateUtils.formatTime(item.sendTime);
+            }
+            this.msgList = this.msgList.concat([item]);
+          }
+        });
+        // 发送接收到新消息需要将div滚动到最底部
+        this.scroll = true;
+      });
+    },
+    /**
+     * 添加间隔时间线(顺序递增的时间)  五分钟
+     * @param msgList
+     */
+    addShowTime(msgList) {
+      // TODO
+      for (let i = 0; i < msgList.length; i++) {
+        let msg = msgList[i];
+        // 最后一个和原列表第一个比较
+        if (i === msgList.length - 1) {
+          if (this.msgList.length > 0) {
+            let next = this.msgList[0];
+            if (
+              this.$dateUtils.intervalMinute(msg.sendTime, next.sendTime, 5)
+            ) {
+              msg.showTime = this.$dateUtils.formatTime(msg.sendTime);
+            }
+          }
+        } else {
+          if (i !== 0) {
+            let pre = msgList[i - 1];
+            if (this.$dateUtils.intervalMinute(pre.sendTime, msg.sendTime, 5)) {
+              msg.showTime = this.$dateUtils.formatTime(msg.sendTime);
+            }
+          }
+        }
+      }
+    },
+    // 滚动翻页
+    infiniteHandler($state) {
+      let _this = this;
+      if (this.pageReq.roomId === 0) {
+        setTimeout(() => {
+          _this.infiniteHandler($state);
+        }, 10);
+      } else {
+        this.sendPageMsg($state);
+      }
+    },
+    sendPageMsg($state) {
+      // 获取容器当前高度
+      let div = document.querySelector(".chat-box-class");
+      this.scrollTop = div.scrollHeight;
+      pageMsg(this.pageReq)
+        .then((res) => {
+          // 设置分页信息
+          this.pageReq.cursor = res.data.cursor;
+          // 组装消息列表
+          this.buildMsgList(res.data.list).then((data) => {
+            // 反转data
+            data = data.reverse();
+            // TODO 间隔时间
+            this.addShowTime(data);
+            this.msgList = data.concat(this.msgList);
+            if (res.data.isLast) {
+              $state.complete();
+            }
+            $state.loaded();
+            this.$nextTick(() => {
+              div.scrollTop = div.scrollHeight - this.scrollTop;
+            });
+          });
+        })
+        .catch((error) => {
+          $state.loaded();
+          this.$message({
+            type: "error",
+            message: error.errMsg,
+          });
+        });
+    },
+
+    /**
+     * 构建消息列表
+     *
+     * @param list
+     * @param needRefreshTime
+     * @return {Promise<*[]>}
+     */
+    async buildMsgList(list, needRefreshTime = true) {
+      // 收集uid
+      let uidList = [];
+      let msgList = [];
+      list.forEach((item) => {
+        uidList.push(item.fromUser.uid);
+        // 构建消息响应体
+        let body = this.$msgUtils.buildMsgRespBody(
+          item.messageInfo.body,
+          item.messageInfo.type
+        );
+        msgList.push({
+          id: item.messageInfo.id,
+          roomId: item.messageInfo.roomId,
+          sendTime: item.messageInfo.sendTime,
+          type: item.messageInfo.type,
+          body,
+          uid: item.fromUser.uid,
+        });
+      });
+      await loadUserSummerListCache(uidList, needRefreshTime).then((data) => {
+        this.$common.assignForList(msgList, data);
+      });
+      return msgList;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.chat-box-class {
+  overflow-y: scroll; /* 当内容溢出时显示垂直滚动条 */
+  width: 100%;
+  height: 88%;
+}
+</style>

@@ -5,6 +5,8 @@ export default {
   FILE_UPLOAD_SCENE_BLOG: 1,
   // 用户场景
   FILE_UPLOAD_SCENE_USER: 2,
+  // 聊天场景
+  FILE_UPLOAD_SCENE_CHAT: 3,
 
   // 前后端密码密钥 必须要16位 不多不少
   AES_KEY: "FtotqrK1ubTB23CZ",
@@ -46,5 +48,16 @@ export default {
     "#23d5ab",
   ],
 
-  // tocbot: "https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js",
+  file_type: {
+    TXT: [".txt"],
+    PPT: [".ppt", ".pptx"],
+    WORD: [".doc", ".docx"],
+    EXCEL: ["xls", "xlsx"],
+    PDF: [".pdf"],
+    ZIP: [".zip", ".7z", ".GZ"],
+    SQL: [".sql"],
+    JAVA: [".java"],
+    JS: [".js"],
+    VUE: [".vue"],
+  },
 };

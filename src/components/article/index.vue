@@ -168,8 +168,8 @@ export default {
           );
           this.articleContentHtml = md.render(this.articleInfo.articleContent);
           this.$nextTick(() => {
-            //TODO 图片展示
-            this.$common.imgShow(".entry-content img");
+            // 图片展示
+            this.$common.imgShow(".entry-showContent img");
             // 代码高亮
             this.highlight();
             this.addId();
@@ -196,7 +196,7 @@ export default {
     getTocbot() {
       tocbot.init({
         tocSelector: "#toc",
-        contentSelector: ".entry-content",
+        contentSelector: ".entry-showContent",
         headingSelector: "h1, h2, h3, h4, h5,h6",
         scrollSmooth: true,
         fixedSidebarOffset: "auto",
@@ -205,7 +205,7 @@ export default {
       });
     },
     addId() {
-      let headings = $(".entry-content").find("h1, h2, h3, h4, h5, h6");
+      let headings = $(".entry-showContent").find("h1, h2, h3, h4, h5, h6");
       headings.attr("id", (i, id) => id || "toc-" + i);
     },
     highlight() {
@@ -272,8 +272,8 @@ export default {
         new ClipboardJS(".copy-code");
       });
 
-      if ($(".entry-content").children("table").length > 0) {
-        $(".entry-content")
+      if ($(".entry-showContent").children("table").length > 0) {
+        $(".entry-showContent")
           .children("table")
           .wrap("<div class='table-wrapper'></div>");
       }

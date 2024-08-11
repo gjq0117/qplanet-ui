@@ -1,5 +1,5 @@
 <template>
-  <!-- 消息项 -->
+  <!-- 消息气泡 -->
   <div
     class="item-class"
     :class="{
@@ -7,6 +7,12 @@
       'right-msg': right,
     }"
   >
+    <!-- 时间线 -->
+    <div class="time-line-class" v-if="msgInfo.showTime">
+      <span style="margin: 10px 0; font-size: 15px; color: lightgray">{{
+        msgInfo.showTime
+      }}</span>
+    </div>
     <div>
       <!-- 头像 -->
       <div
@@ -16,8 +22,8 @@
         }"
       >
         <!--        <el-tooltip effect="dark" placement="right-start">-->
-        <!--          <div slot="content" style="width: 200px; height: 150px">-->
-        <!--            <div class="tooltip-content-class">-->
+        <!--          <div slot="showContent" style="width: 200px; height: 150px">-->
+        <!--            <div class="tooltip-showContent-class">-->
         <!--              <div class="tooltip-image-class">-->
         <!--                <el-image :src="msgInfo.avatar"></el-image>-->
         <!--              </div>-->
@@ -78,29 +84,21 @@
           >
         </div>
         <!-- 消息气泡 -->
-        <div
-          class="msg-bubble-class"
-          :class="{
-            'left-msg-bubble-class': left,
-            'right-msg-bubble-class': right,
-          }"
-        >
-          <!-- TODO 消息内容(区分不同消息类型) -->
-          <span style="color: white">{{ msgInfo.body.content }}</span>
+        <div>
+          <!-- 消息内容 -->
+          <!--  消息内容(区分不同消息类型) -->
+          <msg-content :self="right" :msgInfo="msgInfo" />
         </div>
       </div>
-    </div>
-    <!-- 时间线 -->
-    <div class="time-line-class" v-if="msgInfo.showTime">
-      <span style="margin: 10px 0; font-size: 15px; color: lightgray">{{
-        msgInfo.showTime
-      }}</span>
     </div>
   </div>
 </template>
 
 <script>
+import MsgContent from "@/im/components/chat/chatBox/showContent/index.vue";
+
 export default {
+  components: { MsgContent },
   props: {
     msgInfo: {
       // 0:接受 1:发送
@@ -139,26 +137,6 @@ export default {
 
 .right-name-class {
   float: right;
-}
-
-.msg-bubble-class {
-  max-width: 600px;
-  background-color: #868686;
-  padding: 10px;
-}
-
-.left-msg-bubble-class {
-  float: left;
-  border-top-right-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-}
-
-.right-msg-bubble-class {
-  float: right;
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
 }
 
 .left-msg {
@@ -214,13 +192,16 @@ export default {
   justify-content: center; /* 水平居中 */
   margin-top: 10px;
 }
+
 .tooltip-option-class .iconfont {
   font-size: 30px;
   padding: 15px;
 }
+
 .icon-class :hover {
   cursor: pointer;
 }
+
 .avatar-class :hover {
   cursor: pointer;
 }

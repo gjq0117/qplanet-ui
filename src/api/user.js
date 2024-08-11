@@ -126,3 +126,14 @@ export function batchRefreshUserSummerInfo(reqList) {
     data: { reqList },
   });
 }
+
+export function getUserAtList(atPageReq) {
+  return request({
+    url: USER_BASEURL + "/getUserAtList",
+    method: "post",
+    headers: {
+      isToken: true,
+    },
+    data: atPageReq,
+  });
+}

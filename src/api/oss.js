@@ -23,11 +23,12 @@ export function getUploadPutUrl(fileName, scene) {
 }
 
 export async function uploadFileByPut(file, url) {
+  console.log(file);
   return request({
     url: url,
     method: "put",
     headers: {
-      "Content-Type": file.type,
+      "Content-Type": file.type ? file.type : "application/octet-stream",
     },
     data: file,
   });
