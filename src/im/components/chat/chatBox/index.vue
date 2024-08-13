@@ -108,27 +108,15 @@ export default {
      * @param msgList
      */
     addShowTime(msgList) {
-      // TODO
-      for (let i = 0; i < msgList.length; i++) {
-        let msg = msgList[i];
-        // 最后一个和原列表第一个比较
-        if (i === msgList.length - 1) {
-          if (this.msgList.length > 0) {
-            let next = this.msgList[0];
-            if (
-              this.$dateUtils.intervalMinute(msg.sendTime, next.sendTime, 5)
-            ) {
-              msg.showTime = this.$dateUtils.formatTime(msg.sendTime);
-            }
+      for (let i = 0; i < msgList.length - 1; i++) {
+          if (this.$dateUtils.intervalMinute(msgList[i].sendTime, msgList[i + 1].sendTime, 5)) {
+              msgList[i + 1].showTime = this.$dateUtils.formatTime(msgList[i + 1].sendTime);
           }
-        } else {
-          if (i !== 0) {
-            let pre = msgList[i - 1];
-            if (this.$dateUtils.intervalMinute(pre.sendTime, msg.sendTime, 5)) {
-              msg.showTime = this.$dateUtils.formatTime(msg.sendTime);
-            }
-          }
-        }
+      }
+      if (this.msgList.length > 0) {
+         if (this.$dateUtils.intervalMinute(msgList[msgList.length - 1].sendTime, this.msgList[0].sendTime, 5)) {
+           this.msgList[0].showTime = this.$dateUtils.formatTime(this.msgList[0].sendTime);
+         }
       }
     },
     // 滚动翻页
