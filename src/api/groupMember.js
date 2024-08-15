@@ -15,3 +15,14 @@ export function getGroupMemberPage(params) {
     params: params,
   });
 }
+
+export function getGroupMemberAtPage(params) {
+  return request({
+    url: GROUP_MEMBER_BASEURL + "/getGroupMemberAtPage",
+    method: "get",
+    headers: {
+      isToken: true,
+    },
+    params: params,
+  });
+}

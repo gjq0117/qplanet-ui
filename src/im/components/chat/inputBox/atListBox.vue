@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { getUserAtList } from "@/api/user";
 import { loadUserSummerListCache } from "@/utils/storage";
+import {getGroupMemberAtPage} from "@/api/groupMember";
 
 export default {
   data() {
@@ -43,6 +43,8 @@ export default {
       atPageReq: {
         pageSize: 10,
         cursor: "",
+        roomId: 0,
+        isFirst: true
       },
       isLast: false,
       // at列表展示框的数据
@@ -64,14 +66,19 @@ export default {
     },
     // 翻页
     load() {
+      this.atPageReq.isFirst = false;
       this.sendUserAtList();
     },
     // 打开at列表
     openAtListListener() {
-      this.$EventBus.$on("openAtList", () => {
+      this.$EventBus.$on("openAtList", (roomId) => {
         this.atListVisual = true;
         if (this.atUserList.length === 0) {
-          this.sendUserAtList();
+          this.atPageReq.roomId = roomId;
+          this.atPageReq.isFirst = true;
+          if (this.atPageReq.roomId > 0) {
+            this.sendUserAtList();
+          }
         }
       });
     },
@@ -82,7 +89,7 @@ export default {
       });
     },
     sendUserAtList() {
-      getUserAtList(this.atPageReq)
+      getGroupMemberAtPage(this.atPageReq)
         .then((res) => {
           this.atPageReq.cursor = res.data.cursor;
           this.isLast = res.data.isLast;
@@ -106,6 +113,8 @@ export default {
       this.atPageReq = {
         pageSize: 10,
         cursor: "",
+        roomId: 0,
+        isFirst: true
       };
       this.isLast = false;
     },

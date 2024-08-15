@@ -86,9 +86,8 @@ export default {
     },
     onInput(event) {
       // 控制at列表的出现
-      console.log(event);
       if (event.data === "@") {
-        this.$EventBus.$emit("openAtList");
+        this.$EventBus.$emit("openAtList", this.roomId);
       } else {
         this.$EventBus.$emit("closeAtList");
       }

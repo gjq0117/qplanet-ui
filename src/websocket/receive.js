@@ -13,6 +13,8 @@ const NEW_MESSAGE = 4;
 const NEW_MEMBERS_JOINING_GROUP = 5;
 //6、新会话通知
 const NEW_CONTACT = 6;
+//7、机器人回调通知
+const ROBOT_CALL = 7;
 
 /**
  *  接收新消息
@@ -36,6 +38,10 @@ export function receiveNewMsg(msg) {
     case NEW_CONTACT:
       // 新会话通知
       Vue.prototype.$EventBus.$emit("newContact", msg.data);
+      break;
+    case ROBOT_CALL:
+      // 机器人回调通知
+      console.log(msg.data)
       break;
   }
 }

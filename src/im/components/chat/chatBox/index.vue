@@ -142,7 +142,7 @@ export default {
           this.buildMsgList(res.data.list).then((data) => {
             // 反转data
             data = data.reverse();
-            // TODO 间隔时间
+            // 间隔时间
             this.addShowTime(data);
             this.msgList = data.concat(this.msgList);
             if (res.data.isLast) {
