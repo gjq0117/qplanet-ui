@@ -96,7 +96,7 @@ export default {
     // at用户事件
     registerAtUserListener() {
       this.$EventBus.$on("atUser", (uid, nickname) => {
-        const html_str = `<span class="at-class" contentEditable="false" uid="${uid}" style="padding: 3px">@${nickname}</span>`;
+        const html_str = `<span class="at-class" contentEditable="false" uid="${uid}" style="padding: 2px">@${nickname}</span>`;
         // 去掉最后一个@符号
         if (this.msg.endsWith("@")) {
           // 去掉@符号

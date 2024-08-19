@@ -1,5 +1,7 @@
 // ======================== 接收类型
 import Vue from "vue";
+import { Message } from "element-ui";
+import { callRobot } from "@/api/chatMessage";
 
 //1、登录成功通知
 const LOGIN_SUCCESS = 1;
@@ -41,7 +43,19 @@ export function receiveNewMsg(msg) {
       break;
     case ROBOT_CALL:
       // 机器人回调通知
-      console.log(msg.data)
+      callRobot({
+        robotId: msg.data.robotId,
+        roomId: msg.data.roomId,
+        replyMsgId: msg.data.msgId,
+      })
+        .then()
+        .catch((error) => {
+          Message({
+            type: "error",
+            message: "机器人回调失败：" + error.errMsg,
+          });
+        });
+      console.log(msg.data);
       break;
   }
 }

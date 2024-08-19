@@ -103,7 +103,13 @@
             :show-file-list="false"
             :http-request="uploadImg"
           >
-            <el-image :src="sortInfo.sortImg" fit="fill"> </el-image>
+            <el-image
+              v-if="sortInfo.sortImg"
+              :src="sortInfo.sortImg"
+              fit="fill"
+            >
+            </el-image>
+            <el-button v-else type="text">点击上传</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item label="格言">

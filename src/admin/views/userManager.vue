@@ -8,7 +8,7 @@
           <el-select
             v-model="searchFrom.userType"
             placeholder="选择角色"
-            style="width: 200px; margin-right: 10px"
+            style="width: 150px; margin-right: 10px"
           >
             <el-option
               v-for="item in userTypeList"
@@ -23,7 +23,7 @@
           <el-select
             v-model="searchFrom.isActive"
             placeholder="是否在线"
-            style="width: 200px; margin-right: 10px"
+            style="width: 120px; margin-right: 10px"
           >
             <el-option
               v-for="item in ActiveStatusList"
@@ -38,7 +38,7 @@
           <el-select
             v-model="searchFrom.userStatus"
             placeholder="账号状态"
-            style="width: 200px; margin-right: 10px"
+            style="width: 120px; margin-right: 10px"
           >
             <el-option
               v-for="item in userStatusList"
@@ -53,7 +53,7 @@
           <el-select
             v-model="searchFrom.gender"
             placeholder="选择性别"
-            style="width: 200px; margin-right: 10px"
+            style="width: 130px; margin-right: 10px"
           >
             <el-option
               v-for="item in genderTypeList"

@@ -136,11 +136,17 @@
             :http-request="uploadAvatar"
             :show-file-list="false"
           >
-            <el-avatar :size="150" :src="webInfo.avatar" @error="true">
+            <el-avatar
+              v-if="webInfo.avatar"
+              :size="150"
+              :src="webInfo.avatar"
+              @error="true"
+            >
               <img
                 src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
               />
             </el-avatar>
+            <el-button type="text" v-else>点击上传</el-button>
           </el-upload>
         </el-tooltip>
       </el-form-item>
@@ -152,7 +158,11 @@
             :http-request="uploadBackgroundImg"
             :show-file-list="false"
           >
-            <el-image :src="webInfo.backgroundImage"></el-image>
+            <el-image
+              v-if="webInfo.backgroundImage"
+              :src="webInfo.backgroundImage"
+            ></el-image>
+            <el-button type="text" v-else>点击上传</el-button>
           </el-upload>
         </el-tooltip>
       </el-form-item>

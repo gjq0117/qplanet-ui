@@ -106,12 +106,21 @@ const routes = [
         },
       },
       {
-        path: "/userManager",
-        name: "userManager",
+        path: "/userManage",
+        name: "userManage",
         component: () => import("@/admin/views/userManager.vue"),
         meta: {
           title: "用户管理",
           icon: "el-icon-user-solid",
+        },
+      },
+      {
+        path: "/robotManage",
+        name: "robotManage",
+        component: () => import("@/admin/views/robotManage.vue"),
+        meta: {
+          title: "Ai管理",
+          icon: "el-icon-chat-line-round",
         },
       },
     ],

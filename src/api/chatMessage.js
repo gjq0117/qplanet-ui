@@ -26,3 +26,14 @@ export function sendMsg(req) {
     data: req,
   });
 }
+
+export function callRobot(req) {
+  return request({
+    url: CHAT_BASEURL + "/callRobot",
+    method: "post",
+    headers: {
+      isToken: true,
+    },
+    data: req,
+  });
+}

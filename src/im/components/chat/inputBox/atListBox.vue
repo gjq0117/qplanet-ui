@@ -32,7 +32,7 @@
 
 <script>
 import { loadUserSummerListCache } from "@/utils/storage";
-import {getGroupMemberAtPage} from "@/api/groupMember";
+import { getGroupMemberAtPage } from "@/api/groupMember";
 
 export default {
   data() {
@@ -44,7 +44,7 @@ export default {
         pageSize: 10,
         cursor: "",
         roomId: 0,
-        isFirst: true
+        isFirst: true,
       },
       isLast: false,
       // at列表展示框的数据
@@ -76,9 +76,7 @@ export default {
         if (this.atUserList.length === 0) {
           this.atPageReq.roomId = roomId;
           this.atPageReq.isFirst = true;
-          if (this.atPageReq.roomId > 0) {
-            this.sendUserAtList();
-          }
+          this.sendUserAtList();
         }
       });
     },
@@ -89,6 +87,7 @@ export default {
       });
     },
     sendUserAtList() {
+      if (this.atPageReq.roomId === 0) return;
       getGroupMemberAtPage(this.atPageReq)
         .then((res) => {
           this.atPageReq.cursor = res.data.cursor;
@@ -114,7 +113,7 @@ export default {
         pageSize: 10,
         cursor: "",
         roomId: 0,
-        isFirst: true
+        isFirst: true,
       };
       this.isLast = false;
     },
